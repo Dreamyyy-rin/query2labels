@@ -145,7 +145,11 @@ def main():
         
         head_mean_attn = attn_map_raw[:, label_idx, :].mean(dim=0)
         
-        feature_map_size = args.img_size // 32
+
+        if 'tresnet' in args.backbone.lower():
+            feature_map_size = args.img_size // 32
+        else:
+            feature_map_size = args.img_size // 16
         heatmap = head_mean_attn.reshape(feature_map_size, feature_map_size).numpy()
         
         heatmap = cv2.resize(heatmap, (args.img_size, args.img_size))
