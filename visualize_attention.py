@@ -51,6 +51,7 @@ def main():
     parser.add_argument('--config_file', required=True)
     parser.add_argument('--output_dir', default='attention_maps_output')
     parser.add_argument('--threshold', default=0.5, type=float)
+    parser.add_argument('--pretrained', action='store_true', default=False)
     
     # Argumen yang diperlukan oleh model builder
     parser.add_argument('--backbone', default='tresnetl', type=str)
