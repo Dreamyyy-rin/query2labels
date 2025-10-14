@@ -42,7 +42,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     update_config_from_file(args.config_file)
-    model = build_model(cfg, is_train=False)
+    model = build_model(cfg,)
     checkpoint = torch.load(args.model_path, map_location="cpu")
     model.load_state_dict(checkpoint["state_dict"], strict=False)
     model.eval()
