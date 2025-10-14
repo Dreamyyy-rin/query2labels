@@ -41,7 +41,7 @@ if __name__ == "__main__":
     parser.add_argument("--threshold", type=float, default=0.5)
     args = parser.parse_args()
 
-    update_config_from_file(cfg, args.config_file)
+    update_config_from_file(args.config_file)
     model = build_model(cfg, is_train=False)
     checkpoint = torch.load(args.model_path, map_location="cpu")
     model.load_state_dict(checkpoint["state_dict"], strict=False)
