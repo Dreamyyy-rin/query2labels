@@ -16,7 +16,7 @@ from typing import Dict, List
 
 import models
 from lib.models.cls_cvt import build_CvT
-from models.swin_transformer import build_swin_transformer
+from lib.models.swin_transformer import build_swin_transformer
 
 from utils.misc import clean_state_dict
 
