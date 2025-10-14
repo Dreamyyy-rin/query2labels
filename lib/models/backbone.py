@@ -14,7 +14,7 @@ from torch import nn
 from torchvision.models._utils import IntermediateLayerGetter
 from typing import Dict, List
 
-import models
+from . import models
 from lib.models.cls_cvt import build_CvT
 from lib.models.swin_transformer import build_swin_transformer
 
