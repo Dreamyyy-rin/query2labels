@@ -124,14 +124,18 @@ class Backbone(BackboneBase):
             # load pretrained model
             if pretrained:
                 pretrainedpath = get_model_path(name)
-                checkpoint = torch.load(pretrainedpath, map_location='cpu')
-                from collections import OrderedDict
-                if 'model' in checkpoint:
-                    checkpoint = checkpoint['model']
-                if 'state_dict' in checkpoint:
-                    checkpoint = checkpoint['state_dict']
-                _tmp_st = OrderedDict({k:v for k, v in clean_state_dict(checkpoint).items() if 'head.fc' not in k})
-                backbone.load_state_dict(_tmp_st, strict=False)
+                if os.path.exists(pretrainedpath):
+                    checkpoint = torch.load(pretrainedpath, map_location='cpu')
+                    from collections import OrderedDict
+                    if 'model' in checkpoint:
+                        checkpoint = checkpoint['model']
+                    if 'state_dict' in checkpoint:
+                        checkpoint = checkpoint['state_dict']
+                    _tmp_st = OrderedDict({k:v for k, v in clean_state_dict(checkpoint).items() if 'head.fc' not in k})
+                    backbone.load_state_dict(_tmp_st, strict=False)
+                else:
+                    print(f"[WARNING] File pretrained model TResNet tidak ditemukan: {pretrainedpath}, skip loading.")
+
             
             if return_interm_layers:
                 raise NotImplementedError('return_interm_layers must be False in TResNet!')
@@ -197,17 +201,21 @@ def build_backbone(args):
         del backbone.head
     elif args.backbone in ['CvT_w24']:
         backbone = build_CvT(args.backbone, args.num_class)
-        if args.pretrained:
+        if getattr(args, "pretrained", False):   # pake getattr supaya aman
             pretrainedpath = get_model_path(args.backbone)
-            checkpoint = torch.load(pretrainedpath, map_location='cpu')
-            from collections import OrderedDict
-            _tmp_st = OrderedDict({k:v for k, v in clean_state_dict(checkpoint).items() if 'head' not in k})
-            _tmp_st_output = backbone.load_state_dict(_tmp_st, strict=False)
-            print(str(_tmp_st_output))
+            if os.path.exists(pretrainedpath):   # cek dulu file ada
+                checkpoint = torch.load(pretrainedpath, map_location='cpu')
+                from collections import OrderedDict
+                _tmp_st = OrderedDict({k:v for k, v in clean_state_dict(checkpoint).items() if 'head' not in k})
+                _tmp_st_output = backbone.load_state_dict(_tmp_st, strict=False)
+                print(str(_tmp_st_output))
+            else:
+                print(f"[WARNING] File pretrained model tidak ditemukan: {pretrainedpath}, skip loading.")
         bb_num_channels = backbone.dim_embed[-1]
         backbone.forward = backbone.forward_features
         backbone.cls_token = False
         del backbone.head
+
     else:
         return_interm_layers = False
         backbone = Backbone(args.backbone, train_backbone, return_interm_layers, False, args.pretrained)
