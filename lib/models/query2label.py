@@ -13,8 +13,8 @@ import numpy as np
 import math
 
 from lib.models.backbone import build_backbone
-from models.transformer import build_transformer
-from utils.misc import clean_state_dict
+from lib.models.transformer import build_transformer
+from lib.utils.misc import clean_state_dict
 
 class GroupWiseLinear(nn.Module):
     # could be changed to: 
