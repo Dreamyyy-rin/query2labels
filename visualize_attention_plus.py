@@ -7,6 +7,10 @@ import os
 from lib.models import build_model
 from lib.config import cfg, update_config_from_file
 import numpy as np
+import cv2
+import torch
+from lib.models import build_model
+from lib.config import get_cfg
 
 def visualize_attention(model, image_path, output_dir, threshold=0.5):
     os.makedirs(output_dir, exist_ok=True)
@@ -46,5 +50,18 @@ if __name__ == "__main__":
     checkpoint = torch.load(args.model_path, map_location="cpu")
     model.load_state_dict(checkpoint["state_dict"], strict=False)
     model.eval()
+    # load gambar
+    img = cv2.imread("/kaggle/working/query2labels/images/Bungkuk19.jpg")
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = cv2.resize(img, (384, 384))  # ukuran sesuai backbone
+
+    # ubah ke tensor
+    img_tensor = torch.tensor(img).permute(2,0,1).unsqueeze(0).float() / 255.0
+
+    # forward pass
+    with torch.no_grad():
+        output = model(img_tensor)
+
+    print(output)
 
     visualize_attention(model, args.pic_path, args.output_dir, args.threshold)
