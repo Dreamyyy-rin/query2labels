@@ -10,7 +10,7 @@ import numpy as np
 import cv2
 import torch
 from lib.models import build_model
-from lib.config import get_cfg
+
 
 def visualize_attention(model, image_path, output_dir, threshold=0.5):
     os.makedirs(output_dir, exist_ok=True)
